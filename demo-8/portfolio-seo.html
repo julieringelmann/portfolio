@@ -352,6 +352,10 @@
 			<div class="col-sm-6">
 				<div class="anim-container">
 					<img class="anim-overlay" src="images/Portfolio_SEO/image_half-Mobile.png" />
+					<img class="anim-menu" src="images/Portfolio_SEO/MobileMenu/Mobile_Portrait_Menu1.png" data-x="71.5" data-y="23" data-w="18"
+					 data-h="300" data-count="5" data-period="4000" />
+					<img class="anim-menu" src="images/Portfolio_SEO/TabletMenu/Tablet_Menu1.png" data-x="15.5" data-y="10.7" data-w="53" data-h="300"
+					 data-count="5" data-period="4000" />
 					<div class="anim-children">
 						<img src="images/Portfolio_SEO/Tablet-Portrait.png" class="anim-child" data-x="15" data-y="11" data-w="54" data-h="450" data-t="60"
 						/>
@@ -364,6 +368,8 @@
 			<div class="col-sm-6">
 				<div class="anim-container">
 					<img class="anim-overlay" src="images/Portfolio_SEO/image_half-Desktop.png" />
+					<img class="anim-menu" src="images/Portfolio_SEO/DesktopMenu/Desktop_HD_Menu1.png" data-x="20" data-y="15" data-w="12" data-h="300"
+					 data-count="5" data-period="4000" />
 					<div class="anim-children">
 						<img src="images/Portfolio_SEO/Desktop-HD.png" class="anim-child" data-x="18.5" data-y="7.7" data-w="62.6" data-h="400" data-t="20"
 						/>
@@ -452,6 +458,8 @@
 		var animContainers = document.querySelectorAll('.anim-container');
 
 		var animChildren = document.querySelectorAll('.anim-child');
+		var animMenu = document.querySelectorAll('.anim-menu');
+		var animStarted = [];
 
 		animChildren.forEach(function (child) {
 			var pos = child.dataset;
@@ -462,10 +470,18 @@
 			child.style.width = pos.w + '%';
 		});
 
+		animMenu.forEach(function (child) {
+			var pos = child.dataset;
+			child.style.marginTop = pos.y + '%';
+			child.style.left = pos.x + '%';
+			child.style.width = pos.w + '%';
+		});
+
 		window.addEventListener('scroll', function (e) {
 			animContainers.forEach(function (container) {
-				if ((container.parentElement.offsetTop - window.innerHeight + 200) <= window.scrollY) {
+				if ((container.parentElement.offsetTop - window.innerHeight + 200) <= window.scrollY && !animStarted.includes(container)) {
 					startAnim(container);
+					animStarted.push(container);
 				}
 			})
 		});
@@ -478,6 +494,20 @@
 					var pos = child.dataset;
 					var heightOffset = pos.h * (window.innerWidth / 900)
 					child.style.top = ((child.height - heightOffset) * -1) + 'px';
+				});
+				animMenu.forEach(function (child) {
+					var src = child.src.split('_Menu')[0];
+					var pos = child.dataset;
+					var heightOffset = pos.h * (window.innerWidth / 900)
+
+					for (var i = 1; i < pos.count; i++) {
+						(function (offset) {
+							setTimeout(function () {
+								child.src = src + '_Menu' + offset + '.png'
+							}, pos.period * i)
+						})(i)
+					}
+
 				});
 			}, 400);
 		}
@@ -500,6 +530,11 @@
 		width: 100%;
 		position: relative;
 		z-index: -1;
+	}
+
+	.anim-menu {
+		position: absolute;
+		border: 0 !important;
 	}
 
 	.anim-overlay {
